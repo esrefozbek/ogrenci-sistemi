@@ -1,6 +1,12 @@
 <form method="post">
-  Kullanıcı Adı: <input type="text" name="username" required /><br /><br />
-  Şifre: <input type="password" name="password" required /><br /><br />
-  <button type="submit">Kayıt Ol</button>
+  <div class="mb-3">
+    <label for="email">E-posta</label>
+    <input type="email" class="form-control" name="email" required />
+  </div>
+  <div class="mb-3">
+    <label for="password">Şifre</label>
+    <input type="password" class="form-control" name="password" required />
+  </div>
+  <button type="submit" class="btn btn-success">Kayıt Ol</button>
 </form>
 <a href="/login">Giriş Yap</a>

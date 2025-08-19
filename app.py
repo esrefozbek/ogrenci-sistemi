@@ -45,7 +45,7 @@ def kullanici_tablosu_olustur():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS kullanicilar (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
             sifre TEXT NOT NULL
         )
     """)
@@ -73,9 +73,9 @@ def kullanici_tablosu_olustur():
 kullanici_tablosu_olustur()
 
 class Kullanici(UserMixin):
-    def __init__(self, id, username, sifre_hash):
+    def __init__(self, id, email, sifre_hash):
         self.id = id
-        self.username = username
+        self.email = email
         self.sifre_hash = sifre_hash
 
     @staticmethod
@@ -87,7 +87,7 @@ class Kullanici(UserMixin):
         print(row["sifre"])  # hash düzgün görünüyor mu?
         conn.close()
         if row:
-            return Kullanici(row["id"], row["username"], row["sifre"])
+            return Kullanici(row["id"], row["email"], row["sifre"])
         return None
 
 
@@ -99,15 +99,15 @@ def load_user(user_id):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         sifre_hash = generate_password_hash(password)
 
         conn = db_baglanti()
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO kullanicilar (username, sifre) VALUES (?, ?)",
-                           (username, sifre_hash))
+            cursor.execute("INSERT INTO kullanicilar (email, sifre) VALUES (?, ?)",
+                           (email, sifre_hash))
             conn.commit()
         except sqlite3.IntegrityError:
             return "⚠️ Bu kullanıcı adı zaten kullanılıyor!"
@@ -119,17 +119,17 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
 
         conn = db_baglanti()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM kullanicilar WHERE username = ?", (username,))
+        cursor.execute("SELECT * FROM kullanicilar WHERE email = ?", (email,))
         row = cursor.fetchone()
         conn.close()
 
         if row and check_password_hash(row["sifre"], password):
-            user = Kullanici(row["id"], row["username"], row["sifre"])
+            user = Kullanici(row["id"], row["email"], row["sifre"])
             login_user(user)
             return redirect("/")
         else:
@@ -378,4 +378,3 @@ def csv_import():
 if __name__ == "__main__":
    
     app.run(debug=True)
-
