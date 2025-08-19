@@ -84,7 +84,7 @@ class Kullanici(UserMixin):
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM kullanicilar WHERE id = ?", (user_id,))
         row = cursor.fetchone()
-        print(row["sifre"])  # hash düzgün görünüyor mu?
+        # print(row["sifre"])  # hash düzgün görünüyor mu?
         conn.close()
         if row:
             return Kullanici(row["id"], row["email"], row["sifre"])
