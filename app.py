@@ -16,6 +16,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = "supersecretkey123"  # Flask oturum yönetimi için gerekli
 
+
+
+
+
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -65,6 +69,8 @@ def kullanici_tablosu_olustur():
     conn.commit()
     conn.close()
 
+
+kullanici_tablosu_olustur()
 
 class Kullanici(UserMixin):
     def __init__(self, id, username, sifre_hash):
@@ -370,6 +376,6 @@ def csv_import():
 
 
 if __name__ == "__main__":
-    kullanici_tablosu_olustur()
+   
     app.run(debug=True)
 
