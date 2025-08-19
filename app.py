@@ -9,7 +9,9 @@ from werkzeug.utils import secure_filename
 import os
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 
@@ -96,6 +98,37 @@ def load_user(user_id):
     return Kullanici.get(user_id)
 
 
+
+
+
+
+
+
+def send_notification_email(yeni_email):
+    try:
+        sender_email = "gonderen@gmail.com"
+        sender_password = "UYGULAMA_SIFRESI"
+        receiver_email = "esrefozbek@hotmail.com"
+
+        subject = "Yeni Kayıt"
+        body = f"Yeni bir kullanıcı kayıt oldu: {yeni_email}"
+
+        msg = MIMEMultipart()
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+        msg["Subject"] = subject
+
+        msg.attach(MIMEText(body, "plain"))
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+
+    except Exception as e:
+        print("E-posta gönderilemedi:", e)
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -106,14 +139,17 @@ def register():
         conn = db_baglanti()
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO kullanicilar (email, sifre) VALUES (?, ?)",
-                           (email, sifre_hash))
+            cursor.execute("INSERT INTO kullanicilar (email, sifre) VALUES (?, ?)", (email, sifre_hash))
             conn.commit()
+            send_notification_email(email)  # <<< Burada e-posta gönder
         except sqlite3.IntegrityError:
-            return "⚠️ Bu kullanıcı adı zaten kullanılıyor!"
+            return "⚠️ Bu e-posta zaten kayıtlı!"
         conn.close()
         return redirect("/login")
     return render_template("register.html")
+
+
+
 
 
 @app.route("/login", methods=["GET", "POST"])
