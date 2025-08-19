@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Öğrenci Sistemi</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-light">
+    <div class="container mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📋 Öğrenciler ve Dersler</h1>
+        <a href="/logout" class="btn btn-outline-danger">🚪 Çıkış Yap</a>
+      </div>
+
+      <div class="mb-4 d-flex flex-wrap gap-2">
+        <a href="/ogrenci-ekle" class="btn btn-primary">➕ Öğrenci Ekle</a>
+        <a href="/ders-ekle" class="btn btn-success">📘 Ders Ekle</a>
+        <a href="/csv-export" class="btn btn-outline-dark">⬇ CSV Dışa Aktar</a>
+        <a href="/csv-import" class="btn btn-outline-primary"
+          >📥 CSV'den Yükle</a
+        >
+      </div>
+
+      <form method="get" class="mb-4">
+        <div class="input-group">
+          <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="Ad, soyad veya numara ile ara..."
+            value="{{ arama }}"
+          />
+          <button class="btn btn-outline-secondary" type="submit">Ara</button>
+          {% if arama %}
+          <a href="/" class="btn btn-outline-danger">Temizle</a>
+          {% endif %}
+        </div>
+      </form>
+
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Ad Soyad</th>
+            <th>Numara</th>
+            <th>Ders</th>
+            <th>Öğretmen</th>
+            <th class="text-center">İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in veriler %}
+          <tr>
+            <td>{{ v['ad'] }} {{ v['soyad'] }}</td>
+            <td>{{ v['numara'] }}</td>
+            <td>{{ v['ders_adi'] or '-' }}</td>
+            <td>{{ v['ogretmen_adi'] or '-' }}</td>
+            <td class="text-center">
+              <div class="btn-group btn-group-sm" role="group">
+                <a
+                  href="/ogrenci-guncelle/{{ v['ogrenci_id'] }}"
+                  class="btn btn-info"
+                  title="Öğrenci Güncelle"
+                  >🖊</a
+                >
+
+                <a
+                  href="/ogrenci-sil/{{ v['ogrenci_id'] }}"
+                  class="btn btn-danger"
+                  onclick="return confirm('Öğrenciyi silmek istediğinize emin misiniz?')"
+                  title="Öğrenci Sil"
+                  >🗑</a
+                >
+
+                {% if v['ders_id'] %}
+                <a
+                  href="/ders-guncelle/{{ v['ders_id'] }}"
+                  class="btn btn-secondary"
+                  title="Ders Güncelle"
+                  >📘</a
+                >
+
+                <a
+                  href="/ders-sil/{{ v['ders_id'] }}"
+                  class="btn btn-warning"
+                  onclick="return confirm('Dersi silmek istediğinize emin misiniz?')"
+                  title="Ders Sil"
+                  >❌</a
+                >
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

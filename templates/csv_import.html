@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CSV'den Veri Aktar</title>
+  </head>
+  <body>
+    <h1>CSV Dosyasından Veri Yükle</h1>
+    <form action="/csv-import" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv" required />
+      <button type="submit">Yükle</button>
+    </form>
+    <p><a href="/">Ana sayfaya dön</a></p>
+  </body>
+</html>
